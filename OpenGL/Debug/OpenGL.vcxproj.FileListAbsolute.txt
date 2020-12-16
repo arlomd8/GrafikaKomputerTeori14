@@ -1,2 +1,4 @@
 D:\GIT\OpenGL\OpenGL\OpenGL\Debug\OpenGL.exe
 D:\GIT\OpenGL\OpenGL\OpenGL\Debug\OpenGL.pdb
+D:\GIT\GrafikaKomputerTeori14\OpenGL\Debug\OpenGL.exe
+D:\GIT\GrafikaKomputerTeori14\OpenGL\Debug\OpenGL.pdb

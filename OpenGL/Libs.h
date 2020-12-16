@@ -2,9 +2,10 @@
 
 #include <iostream>
 
-#include <glew.h>
-#include <glfw3.h>
+#include <glew.h> //GLEW
+#include <glfw3.h> // GLFW
 
+//GLM
 #include <glm.hpp>
 #include <vec2.hpp>
 #include <vec3.hpp>
@@ -13,6 +14,6 @@
 #include <gtc\matrix_transform.hpp>
 #include <gtc\type_ptr.hpp>
 
-#include <SOIL2.h>
+#include <SOIL2.h> // SOIL2
 
 using namespace std;
