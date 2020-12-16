@@ -1,0 +1,2 @@
+D:\GIT\OpenGL\OpenGL\OpenGL\Debug\OpenGL.exe
+D:\GIT\OpenGL\OpenGL\OpenGL\Debug\OpenGL.pdb
