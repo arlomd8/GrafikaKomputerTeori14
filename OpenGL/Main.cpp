@@ -1,5 +1,13 @@
 #include "Libs.h"
 
+void UpdateInput(GLFWwindow *window)
+{
+	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+	{
+		glfwSetWindowShouldClose(window, GLFW_TRUE);
+	}
+}
+
 void FrameBuffer_Resize_Callback(GLFWwindow* window, int fbW, int fbH) {
 	glViewport(0, 0, fbW, fbH);
 }
@@ -132,7 +140,7 @@ int main() {
 	//glfwGetFramebufferSize(window, &framebufferWidth, &framebufferHeight);
 	//glViewport(0, 0, framebufferWidth, framebufferHeight);
 
-	glfwMakeContextCurrent(window);
+	glfwMakeContextCurrent(window); 
 
 	// INIT GLEW (NEED WINDOWS AND OPENGL CONTEXT)
 	glewExperimental = GL_TRUE;
@@ -142,6 +150,20 @@ int main() {
 		glfwTerminate();
 	}
 
+	// OPENGL OPTIONS
+	glEnable(GL_DEPTH_TEST);
+
+	glEnable(GL_CULL_FACE); //memisahkan backface
+	glCullFace(GL_BACK);
+	glFrontFace(GL_CCW);
+
+	glEnable(GL_BLEND); // blend color
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+
+
 	// INIT SHADER
 	GLuint core_program;
 	if(!LoadShaders(core_program))
@@ -149,17 +171,15 @@ int main() {
 		glfwTerminate(); 
 	}
 
-
-
-
-
 	//MAIN LOOP
 	while (!glfwWindowShouldClose(window)) {
 		//INPUT UPDATE
 		glfwPollEvents();
 
-		//UPDATE
-		//DRAW 
+		//UPDATE --
+		UpdateInput(window);
+
+		//DRAW --
 
 
 		//CLEAR
