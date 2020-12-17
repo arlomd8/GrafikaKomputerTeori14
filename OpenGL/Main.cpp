@@ -143,8 +143,8 @@ int main() {
 	glfwInit();
 
 	// create window
-	const int WINDOW_WIDTH = 640;
-	const int WINDOW_HEIGHT = 480;
+	const int WINDOW_WIDTH = 720;
+	const int WINDOW_HEIGHT = 720;
 	int framebufferWidth = 0;
 	int framebufferHeight = 0;
 	 
@@ -230,7 +230,7 @@ int main() {
 	// INIT TEXTURE
 	int image_width = 0;
 	int image_height = 0;
-	unsigned char* image = SOIL_load_image("Textures/Record.png", &image_width, &image_height,NULL,SOIL_LOAD_RGBA);
+	unsigned char* image = SOIL_load_image("Textures/Logo.png", &image_width, &image_height,NULL,SOIL_LOAD_RGBA);
 
 	GLuint texture0; //texture ID
 	glGenTextures(1, &texture0);
@@ -255,6 +255,34 @@ int main() {
 	glBindTexture(GL_TEXTURE_2D, 0); 
 	SOIL_free_image_data(image);
 
+	// TEXTURE 1
+	int image_width1 = 0;
+	int image_height1 = 0;
+	unsigned char* image1 = SOIL_load_image("Textures/Space.png", &image_width1, &image_height1, NULL, SOIL_LOAD_RGBA);
+
+	GLuint texture1; //texture ID
+	glGenTextures(1, &texture1);
+	glBindTexture(GL_TEXTURE_2D, texture1);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+	if (image1)
+	{
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image_width1, image_height1, 0, GL_RGBA, GL_UNSIGNED_BYTE, image1);
+		glGenerateMipmap(GL_TEXTURE_2D);
+	}
+	else
+	{
+		cout << "ERROR::TEXTURE_LOADING_FAILED" << "\n";
+	}
+
+	glActiveTexture(0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	SOIL_free_image_data(image1);
+
 	//MAIN LOOP
 	while (!glfwWindowShouldClose(window)) {
 		//INPUT UPDATE
@@ -267,7 +295,7 @@ int main() {
 
 
 		//CLEAR
-		glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 		//USE A PROGRAM
@@ -275,10 +303,14 @@ int main() {
 
 		//update uniforms
 		glUniform1i(glGetUniformLocation(core_program, "texture0"), 0);
+		glUniform1i(glGetUniformLocation(core_program, "texture1"), 1);
 	
 		//ACTIVATE TEXTURE
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, texture0);
+
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, texture1);
 
 		//Bind Vertex Array Object
 		glBindVertexArray(VAO);
