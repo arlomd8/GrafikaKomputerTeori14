@@ -1,3 +1,6 @@
+// NAMA : ARLO MARIO DENDI
+// NRP	: 4210181018
+
 #version 440
 
 layout (location = 0) in vec3 vertex_position;
@@ -9,6 +12,8 @@ out vec3 vs_color;
 out vec2 vs_texcoord;
 
 uniform mat4 ModelMatrix;
+uniform mat4 ViewMatrix;
+uniform mat4 ProjectionMatrix;
 
 void main()
 {
@@ -16,5 +21,5 @@ void main()
 	vs_color = vertex_color;
 	vs_texcoord = vec2(vertex_texcoord.x, vertex_texcoord.y * -1.0f);
 	
-	gl_Position = ModelMatrix * vec4(vertex_position, 1.0f);
+	gl_Position = ProjectionMatrix * ViewMatrix * ModelMatrix * vec4(vertex_position, 1.0f);
 }

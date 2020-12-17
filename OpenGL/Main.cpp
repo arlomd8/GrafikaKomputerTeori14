@@ -1,3 +1,7 @@
+// NAMA : ARLO MARIO DENDI
+// NRP	: 4210181018
+
+
 #include "Libs.h"
 
 Vertex vertices[] =
@@ -154,10 +158,11 @@ int main() {
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
 
-	GLFWwindow* window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "4210181018", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "4210181018_openGL3", NULL, NULL);
 
+	glfwGetFramebufferSize(window, &framebufferWidth, &framebufferHeight);
 	glfwSetFramebufferSizeCallback(window, FrameBuffer_Resize_Callback);
-	//glfwGetFramebufferSize(window, &framebufferWidth, &framebufferHeight);
+	
 	//glViewport(0, 0, framebufferWidth, framebufferHeight);
 
 	glfwMakeContextCurrent(window); 
@@ -173,9 +178,11 @@ int main() {
 	// OPENGL OPTIONS
 	glEnable(GL_DEPTH_TEST);
 
-	glEnable(GL_CULL_FACE); //memisahkan backface
-	glCullFace(GL_BACK);
-	glFrontFace(GL_CCW);
+	//glEnable(GL_CULL_FACE); //memisahkan backface
+	//glCullFace(GL_BACK);
+	//glFrontFace(GL_CCW);
+	
+	
 
 	glEnable(GL_BLEND); // blend color
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -283,7 +290,7 @@ int main() {
 	glBindTexture(GL_TEXTURE_2D, 0);
 	SOIL_free_image_data(image1);
 
-	// TRANSFORM 
+	// INIT MATRIX MATRICES
 	mat4 ModelMatrix(1.0f);
 	ModelMatrix = translate(ModelMatrix, vec3(0.0f ,0.0f, 0.0f));
 	ModelMatrix = rotate(ModelMatrix, radians(0.0f), vec3(1.0f, 0.0f, 0.0f)); // x
@@ -291,8 +298,29 @@ int main() {
 	ModelMatrix = rotate(ModelMatrix, radians(0.0f), vec3(0.0f, 0.0f, 1.0f)); // z
 	ModelMatrix = scale(ModelMatrix, vec3(1.0f));
 
+	vec3 camPosition(0.0f, 0.0f, 1.0f);
+	vec3 camFront(0.0f, 0.0f, -1.0f);
+	vec3 worldUp(0.0f, 1.0f, 0.0f);
+	mat4 ViewMatrix(1.0f);
+	ViewMatrix = lookAt(camPosition, camPosition + camFront, worldUp);
+
+	float fov = 90.0f;
+	float nearPlane = 0.1f; 
+	float farPlane = 1000.0f;
+	mat4 ProjectionMatrix(1.0f);
+	ProjectionMatrix = perspective(
+		radians(fov), 
+		static_cast<float>(framebufferWidth) / framebufferHeight, 
+		nearPlane, 
+		farPlane
+	);
+
+
+	// INIT UNIFORMS
 	glUseProgram(core_program);
-	glUniformMatrix4fv(glGetUniformLocation(core_program, "ModelMatrix"), 1, GL_FALSE, value_ptr(ModelMatrix)); 
+	glUniformMatrix4fv(glGetUniformLocation(core_program, "ModelMatrix"), 1, GL_FALSE, value_ptr(ModelMatrix));
+	glUniformMatrix4fv(glGetUniformLocation(core_program, "ViewMatrix"), 1, GL_FALSE, value_ptr(ViewMatrix));
+	glUniformMatrix4fv(glGetUniformLocation(core_program, "ProjectionMatrix"), 1, GL_FALSE, value_ptr(ProjectionMatrix));
 	glUseProgram(0);
 
 	//MAIN LOOP
@@ -313,19 +341,30 @@ int main() {
 		//USE A PROGRAM
 		glUseProgram(core_program);
 
-		//update uniforms
+		//update uniforms (send data)
 		glUniform1i(glGetUniformLocation(core_program, "texture0"), 0);
 		glUniform1i(glGetUniformLocation(core_program, "texture1"), 1); 
 
 		// transformation, move, rotate, scale
 		ModelMatrix = translate(ModelMatrix, vec3(0.0f, 0.0f, 0.0f));
 		ModelMatrix = rotate(ModelMatrix, radians(0.0f), vec3(1.0f, 0.0f, 0.0f)); // x
-		ModelMatrix = rotate(ModelMatrix, radians(0.0f), vec3(0.0f, 1.0f, 0.0f)); // y
-		ModelMatrix = rotate(ModelMatrix, radians(0.01f), vec3(0.0f, 0.0f, 1.0f)); // z
-		ModelMatrix = scale(ModelMatrix, vec3(1.0005f));
+		ModelMatrix = rotate(ModelMatrix, radians(0.05f), vec3(0.0f, 1.0f, 0.0f)); // y
+		ModelMatrix = rotate(ModelMatrix, radians(0.0f), vec3(0.0f, 0.0f, 1.0f)); // z
+		ModelMatrix = scale(ModelMatrix, vec3(1.0f));
 
-		glUniformMatrix4fv(glGetUniformLocation(core_program, "ModelMatrix"), 1, GL_FALSE, value_ptr(ModelMatrix)); // send data
-	
+		// send data uniforms matrix
+		glUniformMatrix4fv(glGetUniformLocation(core_program, "ModelMatrix"), 1, GL_FALSE, value_ptr(ModelMatrix)); 
+
+		glfwGetFramebufferSize(window, &framebufferWidth, &framebufferHeight); 
+
+		ProjectionMatrix = mat4(1.0f);
+		ProjectionMatrix = perspective(
+			radians(fov),
+			static_cast<float>(framebufferWidth) / framebufferHeight,
+			nearPlane,
+			farPlane
+		);
+		glUniformMatrix4fv(glGetUniformLocation(core_program, "ProjectionMatrix"), 1, GL_FALSE, value_ptr(ProjectionMatrix));
 		//ACTIVATE TEXTURE
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, texture0);

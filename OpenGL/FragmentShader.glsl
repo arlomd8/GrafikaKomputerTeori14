@@ -1,3 +1,6 @@
+// NAMA : ARLO MARIO DENDI
+// NRP	: 4210181018
+
 #version 440
 
 in vec3 vs_position;
@@ -7,7 +10,7 @@ in vec2 vs_texcoord;
 out vec4 fs_color;
 
 uniform sampler2D texture0; 
-uniform sampler2D texture1 ; 
+uniform sampler2D texture1; 
 
 void main()
 {
