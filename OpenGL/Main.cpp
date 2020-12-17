@@ -283,6 +283,18 @@ int main() {
 	glBindTexture(GL_TEXTURE_2D, 0);
 	SOIL_free_image_data(image1);
 
+	// TRANSFORM 
+	mat4 ModelMatrix(1.0f);
+	ModelMatrix = translate(ModelMatrix, vec3(0.0f ,0.0f, 0.0f));
+	ModelMatrix = rotate(ModelMatrix, radians(0.0f), vec3(1.0f, 0.0f, 0.0f)); // x
+	ModelMatrix = rotate(ModelMatrix, radians(0.0f), vec3(0.0f, 1.0f, 0.0f)); // y
+	ModelMatrix = rotate(ModelMatrix, radians(0.0f), vec3(0.0f, 0.0f, 1.0f)); // z
+	ModelMatrix = scale(ModelMatrix, vec3(1.0f));
+
+	glUseProgram(core_program);
+	glUniformMatrix4fv(glGetUniformLocation(core_program, "ModelMatrix"), 1, GL_FALSE, value_ptr(ModelMatrix)); 
+	glUseProgram(0);
+
 	//MAIN LOOP
 	while (!glfwWindowShouldClose(window)) {
 		//INPUT UPDATE
@@ -303,7 +315,16 @@ int main() {
 
 		//update uniforms
 		glUniform1i(glGetUniformLocation(core_program, "texture0"), 0);
-		glUniform1i(glGetUniformLocation(core_program, "texture1"), 1);
+		glUniform1i(glGetUniformLocation(core_program, "texture1"), 1); 
+
+		// transformation, move, rotate, scale
+		ModelMatrix = translate(ModelMatrix, vec3(0.0f, 0.0f, 0.0f));
+		ModelMatrix = rotate(ModelMatrix, radians(0.0f), vec3(1.0f, 0.0f, 0.0f)); // x
+		ModelMatrix = rotate(ModelMatrix, radians(0.0f), vec3(0.0f, 1.0f, 0.0f)); // y
+		ModelMatrix = rotate(ModelMatrix, radians(0.01f), vec3(0.0f, 0.0f, 1.0f)); // z
+		ModelMatrix = scale(ModelMatrix, vec3(1.0005f));
+
+		glUniformMatrix4fv(glGetUniformLocation(core_program, "ModelMatrix"), 1, GL_FALSE, value_ptr(ModelMatrix)); // send data
 	
 		//ACTIVATE TEXTURE
 		glActiveTexture(GL_TEXTURE0);
