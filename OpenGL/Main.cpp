@@ -9,7 +9,7 @@ Vertex vertices[] =
 
 	//vec3(-0.5f, 0.5f,0.0f),			vec3(1.0f, 0.0f, 0.0f),		vec2(0.0f,1.0f),
 	//vec3(0.5f, -0.5f, 0.0f),		vec3(0.0f, 0.0f, 1.0f),		vec2(1.0f,0.0f),
-	vec3(0.5f, 0.5f, 0.0f),			vec3(0.0f, 1.0f ,1.0f),		vec2(0.0f,0.0f)	 //3
+	vec3(0.5f, 0.5f, 0.0f),			vec3(0.0f, 1.0f ,1.0f),		vec2(1.0f,1.0f)	 //3
 };
 unsigned nrOfVertices = sizeof(vertices) / sizeof(Vertex);
 
@@ -193,7 +193,6 @@ int main() {
 
 
 	// VAO, VBO, EBO
-
 	//generate vao dan bind
 	GLuint VAO; 
 	glCreateVertexArrays(1, &VAO);
@@ -211,9 +210,7 @@ int main() {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO); //bind
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW); //send index/element data
 	
-
 	// SET VERTEX ATTRIBPOINTERS AND ENABLE (input assembly)
-
 	//position
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, position));
 	glEnableVertexAttribArray(0);
@@ -230,6 +227,34 @@ int main() {
 	glBindVertexArray(0); 
 
 
+	// INIT TEXTURE
+	int image_width = 0;
+	int image_height = 0;
+	unsigned char* image = SOIL_load_image("Textures/Record.png", &image_width, &image_height,NULL,SOIL_LOAD_RGBA);
+
+	GLuint texture0; //texture ID
+	glGenTextures(1, &texture0);
+	glBindTexture(GL_TEXTURE_2D, texture0);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+	if (image)
+	{
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image_width, image_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
+		glGenerateMipmap(GL_TEXTURE_2D);
+	}
+	else
+	{
+		cout << "ERROR::TEXTURE_LOADING_FAILED" << "\n";	
+	}
+
+	glActiveTexture(0);
+	glBindTexture(GL_TEXTURE_2D, 0); 
+	SOIL_free_image_data(image);
+
 	//MAIN LOOP
 	while (!glfwWindowShouldClose(window)) {
 		//INPUT UPDATE
@@ -242,11 +267,18 @@ int main() {
 
 
 		//CLEAR
-		glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
+		glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 		//USE A PROGRAM
 		glUseProgram(core_program);
+
+		//update uniforms
+		glUniform1i(glGetUniformLocation(core_program, "texture0"), 0);
+	
+		//ACTIVATE TEXTURE
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, texture0);
 
 		//Bind Vertex Array Object
 		glBindVertexArray(VAO);
@@ -258,6 +290,11 @@ int main() {
 		//END DRAW ( RENDER )
 		glfwSwapBuffers(window);
 		glFlush();
+
+		glBindVertexArray(0);
+		glUseProgram(0);
+		glActiveTexture(0);
+		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
 	// END PROGRAM
