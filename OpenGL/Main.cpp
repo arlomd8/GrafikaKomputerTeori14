@@ -1,5 +1,20 @@
 #include "Libs.h"
 
+Vertex vertices[] =
+{
+	//Position						//Color						//Texcoords
+	vec3(0.0f, 0.5f,0.0f),			vec3(1.0f, 0.0f, 0.0f),		vec2(0.0f,1.0f),
+	vec3(-0.5f, -0.5f, 0.0f),		vec3(0.0f, 1.0f ,0.0f),		vec2(0.0f,0.0f),
+	vec3(0.5f, -0.5f, 0.0f),		vec3(0.0f, 0.0f, 1.0f),		vec2(1.0f,0.0f) 
+};
+unsigned nrOfVertices = sizeof(vertices) / sizeof(Vertex);
+
+GLuint indices[] = 
+{
+	0, 1, 2
+};
+unsigned nrOfIndices = sizeof(indices) / sizeof(GLuint);
+
 void UpdateInput(GLFWwindow *window)
 {
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
@@ -171,6 +186,45 @@ int main() {
 		glfwTerminate(); 
 	}
 
+
+	// VAO, VBO, EBO
+
+	//generate vao dan bind
+	GLuint VAO; 
+	glCreateVertexArrays(1, &VAO);
+	glBindVertexArray(VAO); 
+
+	//generate vbo and bind and send data
+	GLuint VBO; 
+	glGenBuffers(1, &VBO); //generate
+	glBindBuffer(GL_ARRAY_BUFFER, VBO); //bind
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW); //send vertex data
+
+	//generate ebo and bind and send data
+	GLuint EBO;
+	glGenBuffers(1, &EBO); //generate
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO); //bind
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW); //send index/element data
+	
+
+	// SET VERTEX ATTRIBPOINTERS AND ENABLE (input assembly)
+
+	//position
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, position));
+	glEnableVertexAttribArray(0);
+
+	//color
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, color));
+	glEnableVertexAttribArray(1);
+	 
+	//texcoord
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, texcoord));
+	glEnableVertexAttribArray(2);
+
+	//BIND VAO 0
+	glBindVertexArray(0); 
+
+
 	//MAIN LOOP
 	while (!glfwWindowShouldClose(window)) {
 		//INPUT UPDATE
@@ -185,6 +239,16 @@ int main() {
 		//CLEAR
 		glClearColor(0.0f, 1.0f, 1.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+		//USE A PROGRAM
+		glUseProgram(core_program);
+
+		//Bind Vertex Array Object
+		glBindVertexArray(VAO);
+
+		//Draw
+		//glDrawArrays(GL_TRIANGLES, 0, nrOfVertices);
+		glDrawElements(GL_TRIANGLES, nrOfIndices, GL_UNSIGNED_INT, 0);	
 
 		//END DRAW ( RENDER )
 		glfwSwapBuffers(window);
