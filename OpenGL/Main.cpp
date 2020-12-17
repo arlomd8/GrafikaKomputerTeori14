@@ -3,15 +3,20 @@
 Vertex vertices[] =
 {
 	//Position						//Color						//Texcoords
-	vec3(0.0f, 0.5f,0.0f),			vec3(1.0f, 0.0f, 0.0f),		vec2(0.0f,1.0f),
-	vec3(-0.5f, -0.5f, 0.0f),		vec3(0.0f, 1.0f ,0.0f),		vec2(0.0f,0.0f),
-	vec3(0.5f, -0.5f, 0.0f),		vec3(0.0f, 0.0f, 1.0f),		vec2(1.0f,0.0f) 
+	vec3(-0.5f, 0.5f,0.0f),			vec3(1.0f, 0.0f, 0.0f),		vec2(0.0f,1.0f), // 0
+	vec3(-0.5f, -0.5f, 0.0f),		vec3(0.0f, 1.0f ,0.0f),		vec2(0.0f,0.0f), // 1
+	vec3(0.5f, -0.5f, 0.0f),		vec3(0.0f, 0.0f, 1.0f),		vec2(1.0f,0.0f), // 2
+
+	//vec3(-0.5f, 0.5f,0.0f),			vec3(1.0f, 0.0f, 0.0f),		vec2(0.0f,1.0f),
+	//vec3(0.5f, -0.5f, 0.0f),		vec3(0.0f, 0.0f, 1.0f),		vec2(1.0f,0.0f),
+	vec3(0.5f, 0.5f, 0.0f),			vec3(0.0f, 1.0f ,1.0f),		vec2(0.0f,0.0f)	 //3
 };
 unsigned nrOfVertices = sizeof(vertices) / sizeof(Vertex);
 
 GLuint indices[] = 
 {
-	0, 1, 2
+	0, 1, 2, //Triangle 1
+	0, 2, 3	//Triangle 2
 };
 unsigned nrOfIndices = sizeof(indices) / sizeof(GLuint);
 
@@ -237,7 +242,7 @@ int main() {
 
 
 		//CLEAR
-		glClearColor(0.0f, 1.0f, 1.0f, 1.0f);
+		glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 		//USE A PROGRAM
