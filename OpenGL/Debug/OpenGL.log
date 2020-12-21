@@ -1,5 +1,5 @@
 ﻿  Main.cpp
-D:\GIT\GrafikaKomputerTeori14\OpenGL\Main.cpp(168,21): warning C4305: '+=': truncation from 'double' to 'T'
+D:\GIT\GrafikaKomputerTeori14\OpenGL\Main.cpp(168,20): warning C4305: '+=': truncation from 'double' to 'T'
           with
           [
               T=float

@@ -6,14 +6,14 @@
 
 Vertex vertices[] =
 {
-	//Position						//Color						//Texcoords
-	vec3(-0.5f, 0.5f,0.0f),			vec3(1.0f, 0.0f, 0.0f),		vec2(0.0f,1.0f), // 0
-	vec3(-0.5f, -0.5f, 0.0f),		vec3(0.0f, 1.0f ,0.0f),		vec2(0.0f,0.0f), // 1
-	vec3(0.5f, -0.5f, 0.0f),		vec3(0.0f, 0.0f, 1.0f),		vec2(1.0f,0.0f), // 2
+	//Position						//Color						//Texcoords			//normal
+	vec3(-0.5f, 0.5f,0.0f),			vec3(1.0f, 0.0f, 0.0f),		vec2(0.0f,1.0f),	vec3(0.0f, 0.0f, -1.0f), // 0
+	vec3(-0.5f, -0.5f, 0.0f),		vec3(0.0f, 1.0f ,0.0f),		vec2(0.0f,0.0f),	vec3(0.0f, 0.0f, -1.0f), // 1
+	vec3(0.5f, -0.5f, 0.0f),		vec3(0.0f, 0.0f, 1.0f),		vec2(1.0f,0.0f),	vec3(0.0f, 0.0f, -1.0f), // 2
 
-	//vec3(-0.5f, 0.5f,0.0f),			vec3(1.0f, 0.0f, 0.0f),		vec2(0.0f,1.0f),
-	//vec3(0.5f, -0.5f, 0.0f),		vec3(0.0f, 0.0f, 1.0f),		vec2(1.0f,0.0f),
-	vec3(0.5f, 0.5f, 0.0f),			vec3(0.0f, 1.0f ,1.0f),		vec2(1.0f,1.0f)	 //3
+	//vec3(-0.5f, 0.5f,0.0f),		vec3(1.0f, 0.0f, 0.0f),		vec2(0.0f,1.0f),	vec3(0.0f, 0.0f, -1.0f),
+	//vec3(0.5f, -0.5f, 0.0f),		vec3(0.0f, 0.0f, 1.0f),		vec2(1.0f,0.0f),	vec3(0.0f, 0.0f, -1.0f),
+	vec3(0.5f, 0.5f, 0.0f),			vec3(0.0f, 1.0f ,1.0f),		vec2(1.0f,1.0f),	vec3(0.0f, 0.0f, -1.0f)	//3
 };
 unsigned nrOfVertices = sizeof(vertices) / sizeof(Vertex);
 
@@ -161,11 +161,11 @@ void KeyboardInput(GLFWwindow* window, glm::vec3& position, glm::vec3& rotation,
 	}
 	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
 	{
-		rotation.y -= 0.05f;
+		rotation.y -= 0.1f;
 	}
 	if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
 	{
-		rotation.y += 0.05;
+		rotation.y += 0.1;
 	}
 	if (glfwGetKey(window, GLFW_KEY_X) == GLFW_PRESS)
 	{
@@ -176,7 +176,7 @@ void KeyboardInput(GLFWwindow* window, glm::vec3& position, glm::vec3& rotation,
 		scale -= 0.001f;
 	}
 }
-
+ 
 int main() {
 
 	// INIT GLFW
@@ -234,7 +234,8 @@ int main() {
 		glfwTerminate(); 
 	}
 
-
+	//MODEL
+	
 	// VAO, VBO, EBO
 	//generate vao dan bind
 	GLuint VAO; 
@@ -265,6 +266,10 @@ int main() {
 	//texcoord
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, texcoord));
 	glEnableVertexAttribArray(2);
+
+	//Normal 
+	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, normal));
+	glEnableVertexAttribArray(3);
 
 	//BIND VAO 0
 	glBindVertexArray(0); 
@@ -301,7 +306,7 @@ int main() {
 	// TEXTURE 1
 	int image_width1 = 0;
 	int image_height1 = 0;
-	unsigned char* image1 = SOIL_load_image("Textures/Space.png", &image_width1, &image_height1, NULL, SOIL_LOAD_RGBA);
+	unsigned char* image1 = SOIL_load_image("Textures/CryCat.png", &image_width1, &image_height1, NULL, SOIL_LOAD_RGBA);
 
 	GLuint texture1; //texture ID
 	glGenTextures(1, &texture1);
@@ -356,12 +361,17 @@ int main() {
 		farPlane
 	);
 
+	//LIGHTS
+	vec3 lightPos0(0.0f, 0.0f, 2.0f); // jika z negatif maka berada di depan camera, jika positif dibelakang camera
 
 	// INIT UNIFORMS
 	glUseProgram(core_program);
 	glUniformMatrix4fv(glGetUniformLocation(core_program, "ModelMatrix"), 1, GL_FALSE, value_ptr(ModelMatrix));
 	glUniformMatrix4fv(glGetUniformLocation(core_program, "ViewMatrix"), 1, GL_FALSE, value_ptr(ViewMatrix));
 	glUniformMatrix4fv(glGetUniformLocation(core_program, "ProjectionMatrix"), 1, GL_FALSE, value_ptr(ProjectionMatrix));
+	
+	glUniform3fv(glGetUniformLocation(core_program, "lightPos0"), 1, glm::value_ptr(lightPos0));
+	
 	glUseProgram(0);
 
 	//MAIN LOOP
