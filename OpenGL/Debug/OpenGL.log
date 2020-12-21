@@ -1,2 +1,7 @@
 ﻿  Main.cpp
+D:\GIT\GrafikaKomputerTeori14\OpenGL\Main.cpp(168,21): warning C4305: '+=': truncation from 'double' to 'T'
+          with
+          [
+              T=float
+          ]
   OpenGL.vcxproj -> D:\GIT\GrafikaKomputerTeori14\OpenGL\Debug\OpenGL.exe
