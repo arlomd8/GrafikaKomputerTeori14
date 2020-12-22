@@ -306,7 +306,7 @@ int main() {
 	// TEXTURE 1
 	int image_width1 = 0;
 	int image_height1 = 0;
-	unsigned char* image1 = SOIL_load_image("Textures/CryCat.png", &image_width1, &image_height1, NULL, SOIL_LOAD_RGBA);
+	unsigned char* image1 = SOIL_load_image("Textures/Gold.png", &image_width1, &image_height1, NULL, SOIL_LOAD_RGBA);
 
 	GLuint texture1; //texture ID
 	glGenTextures(1, &texture1);
@@ -371,6 +371,7 @@ int main() {
 	glUniformMatrix4fv(glGetUniformLocation(core_program, "ProjectionMatrix"), 1, GL_FALSE, value_ptr(ProjectionMatrix));
 	
 	glUniform3fv(glGetUniformLocation(core_program, "lightPos0"), 1, glm::value_ptr(lightPos0));
+	glUniform3fv(glGetUniformLocation(core_program, "cameraPos"), 1, glm::value_ptr(camPosition));
 	
 	glUseProgram(0);
 
